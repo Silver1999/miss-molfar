@@ -20,26 +20,35 @@ class AjaxUploadController extends Controller
     {
         $validation = Validator::make($request->all(), [
             'email' => 'required|email',
-            'a_file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'a_file2' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
         if ($validation->passes()) {
-            $image = $request->file('a_file');
-            $image2 = $request->file('a_file2');
-            $new_name = rand() . '.' . $image->getClientOriginalExtension();
-            $new_name2 = rand() . '.' . $image2->getClientOriginalExtension();
-            $image->move(storage_path(), $new_name);
-            $image2->move(storage_path(), $new_name2);
+            $names=array();
+            $images = $request->file('a_file');
+            if (count($images)>2 or count($images)<=1){
+                return response()->json([
+                    'message' => $validation->errors()->all(),
+                    'uploaded_image' => '',
+                    'class_name' => 'alert-danger'
+
+                ]);
+                die();
+            }
+            foreach ($images as $image) {
+                $new_name = rand() . '.' . $image->getClientOriginalExtension();
+                $image->move(storage_path(), $new_name);
+                array_push($names,$new_name);
+
+            }
             $data = array(
                 'email' => $request->email,
                 'image' => $image,
-                'new_name' => $new_name,
-                'new_name2' => $new_name2,
+                'new_name1' => $names[0],
+                'new_name2' => $names[1],
             );
             Mail::to('web-tutorial@programmer.net')->send(new Homemail($data));
-            unlink(storage_path("$new_name"));
-            unlink(storage_path("$new_name2"));
-            return response()->json([
+        unlink(storage_path($data['new_name1']));
+        unlink(storage_path($data['new_name2']));
+        return response()->json([
                 'message' => 'Image Upload Successfully',
                 'uploaded_image' => '<img src="/images/' . $new_name . '" class="img-thumbnail" width="300" />',
                 'class_name' => 'alert-success'

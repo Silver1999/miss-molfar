@@ -18,8 +18,7 @@
             <table class="table">
                 <tr>
                     <td width="40%" align="right"><label>Select File for Upload</label></td>
-                    <td width="30"><input type="file" name="a_file" id="select_file" multiple/></td>
-                    <td width="30"><input type="file" name="a_file2" id="select_file" multiple/></td>
+                    <td width="30"><input type="file" name="a_file[]" id="select_file" multiple/></td>
                     <td width="30"><input type="text" name="email"></td>
                     <td width="30%" align="left"><input type="submit" name="upload" id="upload" class="btn btn-primary" value="Upload" ></td>
                 </tr>
