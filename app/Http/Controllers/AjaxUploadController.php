@@ -20,6 +20,14 @@ class AjaxUploadController extends Controller
     {
         $validation = Validator::make($request->all(), [
             'email' => 'required|email',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'birth-date' => 'required',
+            'city' => 'required',
+            'ig-link' => 'required',
+            'tel' => 'required|numeric',
+            'expirience' => 'required',
+            'a_file' => 'required',
         ]);
         if ($validation->passes()) {
             $names = array();
@@ -28,7 +36,6 @@ class AjaxUploadController extends Controller
             if (count($images) > 2 or count($images) <= 1) {
                 return response()->json([
                     'message' => 'Виберіть  будь ласка два зображення',
-                    'uploaded_image' => '',
                     'class_name' => 'alert-danger'
 
                 ]);
@@ -37,7 +44,6 @@ class AjaxUploadController extends Controller
                 if (in_array($image->getClientOriginalExtension(), $extension) == false) {
                     return response()->json([
                         'message' => 'Виберіть  будь ласка  зображення',
-                        'uploaded_image' => '',
                         'class_name' => 'alert-danger'
 
                     ]);
@@ -58,16 +64,21 @@ class AjaxUploadController extends Controller
             unlink(storage_path($data['new_name1']));
             unlink(storage_path($data['new_name2']));
             return response()->json([
-                'message' => 'Image Upload Successfully',
-                'uploaded_image' => '<img src="/images/' . $new_name . '" class="img-thumbnail" width="300" />',
-                'class_name' => 'alert-success'
+                'message' => 'Success',
             ]);
+
 
         } else {
             return response()->json([
-                'message' => $validation->errors()->all(),
-                'uploaded_image' => '',
-                'class_name' => 'alert-danger'
+                'email' =>$validation->errors()->first('email'),
+                'firstname' =>$validation->errors()->first('firstname'),
+                'lastname' =>$validation->errors()->first('lastname'),
+                'birthdate' =>$validation->errors()->first('birth-date'),
+                'city' =>$validation->errors()->first('city'),
+                'iglink' =>$validation->errors()->first('ig-link'),
+                'tel' =>$validation->errors()->first('tel'),
+                'expirience'=>$validation->errors()->first('expirience'),
+                'file'  =>$validation->errors()->first('a_file'),
             ]);
         }
     }

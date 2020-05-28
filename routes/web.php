@@ -16,6 +16,11 @@ Route::get('/email', function () {
    return view('form');
 
 });
+Route::get('/', function () {
+   return view('pages.miss-molfar');
+
+});
+Route::post('/', 'AjaxUploadController@action')->name('ajaxupload.action');
 Route::post('/email/', 'CallbackController@index')->name('callback');
 Route::get('/ajax_upload', 'AjaxUploadController@index');
 Route::post('/ajax_upload/action', 'AjaxUploadController@action')->name('ajaxupload.action');
