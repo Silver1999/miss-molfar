@@ -22,21 +22,30 @@ class AjaxUploadController extends Controller
             'email' => 'required|email',
         ]);
         if ($validation->passes()) {
-            $names=array();
+            $names = array();
+            $extension = array("png", "jpg", "jpeg");
             $images = $request->file('a_file');
-            if (count($images)>2 or count($images)<=1){
+            if (count($images) > 2 or count($images) <= 1) {
                 return response()->json([
-                    'message' => $validation->errors()->all(),
+                    'message' => 'Виберіть  будь ласка два зображення',
                     'uploaded_image' => '',
                     'class_name' => 'alert-danger'
 
                 ]);
-                die();
             }
             foreach ($images as $image) {
+                if (in_array($image->getClientOriginalExtension(), $extension) == false) {
+                    return response()->json([
+                        'message' => 'Виберіть  будь ласка  зображення',
+                        'uploaded_image' => '',
+                        'class_name' => 'alert-danger'
+
+                    ]);
+                }
+
                 $new_name = rand() . '.' . $image->getClientOriginalExtension();
                 $image->move(storage_path(), $new_name);
-                array_push($names,$new_name);
+                array_push($names, $new_name);
 
             }
             $data = array(
@@ -46,9 +55,9 @@ class AjaxUploadController extends Controller
                 'new_name2' => $names[1],
             );
             Mail::to('web-tutorial@programmer.net')->send(new Homemail($data));
-        unlink(storage_path($data['new_name1']));
-        unlink(storage_path($data['new_name2']));
-        return response()->json([
+            unlink(storage_path($data['new_name1']));
+            unlink(storage_path($data['new_name2']));
+            return response()->json([
                 'message' => 'Image Upload Successfully',
                 'uploaded_image' => '<img src="/images/' . $new_name . '" class="img-thumbnail" width="300" />',
                 'class_name' => 'alert-success'
