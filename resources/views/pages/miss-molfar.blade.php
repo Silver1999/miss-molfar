@@ -395,65 +395,66 @@
                     {{ csrf_field() }}
                     <p class="form__success">Отправлено!
                     </p>
-                    <p class="form__line"><input class="form__input"  type="text" placeholder="Имя" name="firstname"
+                    <p class="form__line"><input class="form__input" type="text" placeholder="Имя" name="firstname"
                                                  id="firstname">
                         <label class="form__label" for="firstname">Имя
                         </label>
-                        <span class="alert"  id="firstname_valid" style="display: none"></span>
+                        <span class="alert" id="firstname_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="text" placeholder="Фамилия" name="lastname"
                                                  id="lastname">
                         <label class="form__label" for="lastname">Фамилия
                         </label>
-                        <span class="alert"  id="lastname_valid" style="display: none"></span>
+                        <span class="alert" id="lastname_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="date" placeholder="Дата рождения"
                                                  name="birth-date" id="birth-date">
                         <label class="form__label" for="birth-date">Дата рождения
                         </label>
-                        <span class="alert"  id="birth-date_valid" style="display: none"></span>
+                        <span class="alert" id="birth-date_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="text" placeholder="Город" name="city"
                                                  id="city">
                         <label class="form__label" for="city">Город
                         </label>
-                        <span class="alert"  id="city_valid" style="display: none"></span>
+                        <span class="alert" id="city_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="text" placeholder="Ссылка на Instagram"
                                                  name="ig-link" id="ig-link">
                         <label class="form__label" for="ig-link">Ссылка на Instagram
                         </label>
-                        <span class="alert"  id="ig_valid" style="display: none"></span>
+                        <span class="alert" id="ig_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="tel" placeholder="Телефон" name="tel"
                                                  id="tel">
                         <label class="form__label" for="tel">Телефон
                         </label>
-                        <span class="alert"  id="tel_valid" style="display: none"></span>
+                        <span class="alert" id="tel_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="email" placeholder="Э-почта" name="email"
                                                  id="email">
                         <label class="form__label" for="email">Э-почта
                         </label>
-                        <span class="alert"  id="email_valid" style="display: none"></span>
+                        <span class="alert" id="email_valid" style="display: none"></span>
                     </p>
                     <p class="form__line"><input class="form__input" type="text"
                                                  placeholder="Принимали участие в конкурсах красоты?" name="expirience"
                                                  id="expirience">
                         <label class="form__label" for="expirience">Опыт в конкурсах красоты?
                         </label>
-                        <span class="alert"  id="expirience_valid" style="display: none"></span>
+                        <span class="alert" id="expirience_valid" style="display: none"></span>
                     </p>
                     <p class="form__line">
                         <input class="form__file" type="file" name="a_file[]" id="select_file" multiple/>
-                        <label class="form__label form__label--file" for="select_file">Добавьте 2 фото — в полный рост и
+                        <label class="form__label form__label--file" id="file_select" for="select_file">Добавьте 2 фото
+                            — в полный рост и
                             портрет
                         </label>
-                        <span class="alert"  id="file_valid" style="display: none"></span>
+                        <span class="alert" id="file_valid" style="display: none"></span>
                     </p>
                     <p class="form__line form__line--checkbox"><input class="form__checkbox" type="checkbox"
                                                                       id="checkbox" required="required"
-                                                                      />
+                        />
                         <label class="form__label form__label--checkbox" for="checkbox">Я ознакомлена с <a
                                     class="form__link"
                                     href="https://drive.google.com/file/d/1rpU_UXI0Ws90UtZpZSltBIQH2ymgDCvv/view?usp=sharing"
@@ -494,47 +495,66 @@
 </div>
 <script src="js/scripts.min.js?v=1586338379280"></script>
 <script>
-        $(document).ready(function(){
+    $('input#select_file').change(function () {
+        var files = $(this)[0].files;
+        if (files.length == 2) {
+            document.getElementById('file_select').innerHTML = 'Добавлено' + ' ' + files.length + ' ' + 'фото';
+        } else {
+            document.getElementById('file_select').innerHTML = 'Выберите только 2 фото!';
+        }
+    });
+    $(document).ready(function () {
 
-            $('#upload_form').on('submit', function(event){
-                event.preventDefault();
-                $.ajax({
-                    url:"{{ route('ajaxupload.action') }}",
-                    method:"POST",
-                    data:new FormData(this),
-                    dataType:'JSON',
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success:function(data)
-                    {
-                        if(data.message=="Success") {
-                            document.getElementById("upload_form").classList.add('form--success');
-                            document.getElementById("upload_form").reset();
-                            setTimeout(function () {
-                                document.getElementById("upload_form").classList.remove('form--success');
-                            }, 3000);
-                            data.message="";
-                        }
-                        function validate(id,eroor){
-                            $(id).html(eroor);
-                            $(id).css('display', 'block').css('color','red');
-                            $(id).addClass(data.class_name);
-                        }
-                        validate('#firstname_valid',data.firstname);
-                        validate('#lastname_valid',data.lastname);
-                        validate('#city_valid',data.city);
-                        validate('#email_valid',data.email);
-                        validate('#ig_valid',data.iglink);
-                        validate('#birth-date_valid',data.birthdate);
-                        validate('#tel_valid',data.tel);
-                        validate('#expirience_valid',data.expirience);
-                        validate('#file_valid',data.file);
-                    },
-                })
-            });
+        $('#upload_form').on('submit', function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: "{{ route('ajaxupload.action') }}",
+                method: "POST",
+                data: new FormData(this),
+                dataType: 'JSON',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    if (data.message == "Success") {
+                        document.getElementById("upload_form").classList.add('form--success');
+                        document.getElementById("upload_form").reset();
+                        document.getElementById('file_select').innerHTML = "Добавьте 2 фото — в полный рост и\n" +
+                            "                            портрет";
+                        setTimeout(function () {
+                            document.getElementById("upload_form").classList.remove('form--success');
+                        }, 3000);
+                        data.message = "";
+                        data.firstname = "";
+                        data.lastname = "";
+                        data.city = "";
+                        data.email = "";
+                        data.iglink = "";
+                        data.birthdate = "";
+                        data.tel = "";
+                        data.expirience = "";
 
+                    }
+
+                    function validate(id, eroor) {
+                        $(id).html(eroor);
+                        $(id).css('display', 'block').css('color', 'red');
+                        $(id).addClass(data.class_name);
+                    }
+
+                    validate('#firstname_valid', data.firstname);
+                    validate('#lastname_valid', data.lastname);
+                    validate('#city_valid', data.city);
+                    validate('#email_valid', data.email);
+                    validate('#ig_valid', data.iglink);
+                    validate('#birth-date_valid', data.birthdate);
+                    validate('#tel_valid', data.tel);
+                    validate('#expirience_valid', data.expirience);
+                },
+            })
         });
+
+    });
 </script>
 </body>
 </html>
