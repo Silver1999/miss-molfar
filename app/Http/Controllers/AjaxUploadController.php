@@ -56,6 +56,13 @@ class AjaxUploadController extends Controller
             }
             $data = array(
                 'email' => $request->email,
+                'firstname' => $request->firstname,
+                'lastname' => $request->lastname,
+                'birth-date' => $request->input('birth-date'),
+                'city' => $request->city,
+                'tel' => $request->tel,
+                'ig-link' => $request->input('ig-link'),
+                'expirience' => $request->expirience,
                 'image' => $image,
                 'new_name1' => $names[0],
                 'new_name2' => $names[1],
